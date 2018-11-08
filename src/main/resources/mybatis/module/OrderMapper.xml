@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homk.project.module.order.mapper.OrderMapper">
+    
+    <resultMap type="Order" id="OrderResult">
+        <result property="userId"    column="userId"    />
+        <result property="userName"    column="userName"    />
+        <result property="userPhone"    column="userPhone"    />
+        <result property="provinceId"    column="provinceId"    />
+        <result property="cityId"    column="cityId"    />
+        <result property="merId"    column="merId"    />
+        <result property="projectId"    column="projectId"    />
+        <result property="price"    column="price"    />
+        <result property="createTime"    column="createTime"    />
+    </resultMap>
+	
+	<sql id="selectOrderVo">
+        select userId, userName, userPhone, provinceId, cityId, merId, projectId, price, createTime from biz_order
+    </sql>
+	
+    <select id="selectOrderList" parameterType="Order" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        <where>  
+            <if test="userId != null and userId != ''"> and userId = #{userId}</if>
+             <if test="userName != null and userName != ''"> and userName = #{userName}</if>
+             <if test="userPhone != null and userPhone != ''"> and userPhone = #{userPhone}</if>
+             <if test="provinceId != null and provinceId != ''"> and provinceId = #{provinceId}</if>
+             <if test="cityId != null and cityId != ''"> and cityId = #{cityId}</if>
+             <if test="merId != null and merId != ''"> and merId = #{merId}</if>
+             <if test="projectId != null and projectId != ''"> and projectId = #{projectId}</if>
+             <if test="price != null and price != ''"> and price = #{price}</if>
+             <if test="createTime != null and createTime != ''"> and createTime = #{createTime}</if>
+         </where>
+    </select>
+
+    <select id="findOrderList" parameterType="Order" resultType="Map">
+        select
+          a.userId,
+          a.userName,
+          a.userPhone,
+          a.provinceId,
+          a.cityId,
+          a.merId,
+          a.projectId,
+          a.price,
+          a.createTime,
+          b.bizName,
+          proj.proName,
+          p.name province,
+          ci.name city
+        from biz_order a
+        left join biz_merchant b on b.id = a.merId
+        left join biz_proj proj on proj.id = a.projectId
+        left join biz_province p on p.id = a.provinceId
+        left join biz_city ci on ci.id = a.cityId
+        <where>
+            <if test="userId != null and userId != ''"> and a.userId = #{userId}</if>
+            <if test="userName != null and userName != ''"> and a.userName = #{userName}</if>
+            <if test="userPhone != null and userPhone != ''"> and a.userPhone = #{userPhone}</if>
+            <if test="provinceId != null and provinceId != ''"> and a.provinceId = #{provinceId}</if>
+            <if test="cityId != null and cityId != ''"> and a.cityId = #{cityId}</if>
+            <if test="merId != null and merId != ''"> and a.merId = #{merId}</if>
+            <if test="projectId != null and projectId != ''"> and a.projectId = #{projectId}</if>
+            <if test="price != null and price != ''"> and a.price = #{price}</if>
+            <if test="createTime != null and createTime != ''"> and a.createTime = #{createTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        where userId = #{userId}
+    </select>
+        
+    <insert id="insertOrder" parameterType="Order">
+        insert into biz_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != '' ">userId,</if>
+			<if test="userName != null and userName != '' ">userName,</if>
+			<if test="userPhone != null and userPhone != '' ">userPhone,</if>
+			<if test="provinceId != null and provinceId != '' ">provinceId,</if>
+			<if test="cityId != null and cityId != '' ">cityId,</if>
+			<if test="merId != null and merId != '' ">merId,</if>
+			<if test="projectId != null and projectId != '' ">projectId,</if>
+			<if test="price != null and price != '' ">price,</if>
+			<if test="createTime != null and createTime != '' ">createTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">#{userId},</if>
+			<if test="userName != null and userName != ''">#{userName},</if>
+			<if test="userPhone != null and userPhone != ''">#{userPhone},</if>
+			<if test="provinceId != null and provinceId != ''">#{provinceId},</if>
+			<if test="cityId != null and cityId != ''">#{cityId},</if>
+			<if test="merId != null and merId != ''">#{merId},</if>
+			<if test="projectId != null and projectId != ''">#{projectId},</if>
+			<if test="price != null and price != ''">#{price},</if>
+			<if test="createTime != null and createTime != ''">#{createTime},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateOrder" parameterType="Order">
+        update biz_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null  and userName != ''  ">userName = #{userName},</if>
+            <if test="userPhone != null  and userPhone != ''  ">userPhone = #{userPhone},</if>
+            <if test="provinceId != null  ">provinceId = #{provinceId},</if>
+            <if test="cityId != null  ">cityId = #{cityId},</if>
+            <if test="merId != null  ">merId = #{merId},</if>
+            <if test="projectId != null  ">projectId = #{projectId},</if>
+            <if test="price != null  ">price = #{price},</if>
+            <if test="createTime != null  ">createTime = #{createTime},</if>
+        </trim>
+        where userId = #{userId}
+    </update>
+
+	<delete id="deleteOrderById" parameterType="Long">
+        delete from biz_order where userId = #{userId}
+    </delete>
+	
+    <delete id="deleteOrderByIds" parameterType="String">
+        delete from biz_order where userId in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    
+</mapper>

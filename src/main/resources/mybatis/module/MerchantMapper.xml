@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homk.project.module.merchant.mapper.MerchantMapper">
+    
+    <resultMap type="Merchant" id="MerchantResult">
+        <result property="id"    column="id"    />
+        <result property="bizName"    column="bizName"    />
+        <result property="desc"    column="bizdesc"    />
+        <result property="logo"    column="logo"    />
+        <result property="userName"    column="userName"    />
+        <result property="phone"    column="phone"    />
+        <result property="pic"    column="pic"    />
+        <result property="prodesc"    column="prodesc"    />
+        <result property="sort"    column="sort"    />
+        <result property="rank"    column="rank"    />
+        <result property="provinceId"    column="provinceId"    />
+        <result property="city"    column="city"    />
+        <result property="createTime"    column="createTime"    />
+    </resultMap>
+	
+	<sql id="selectMerchantVo">
+        select id, bizName, bizdesc, logo, userName, phone, pic, prodesc, sort, rank, provinceId, city ,createTime from biz_merchant
+    </sql>
+	
+    <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        <where>  
+            <if test="id != null and id != ''"> and id = #{id}</if>
+             <if test="desc != null and desc != ''"> and desc = #{desc}</if>
+             <if test="logo != null and logo != ''"> and logo = #{logo}</if>
+             <if test="userName != null and userName != ''"> and userName = #{userName}</if>
+             <if test="phone != null and phone != ''"> and phone = #{phone}</if>
+             <if test="pic != null and pic != ''"> and pic = #{pic}</if>
+             <if test="prodesc != null and prodesc != ''"> and prodesc = #{prodesc}</if>
+             <if test="sort != null and sort != ''"> and sort = #{sort}</if>
+             <if test="rank != null and rank != ''"> and rank = #{rank}</if>
+             <if test="provinceId != null and provinceId != ''"> and provinceId = #{provinceId}</if>
+             <if test="city != null and city != ''"> and city = #{city}</if>
+         </where>
+    </select>
+    
+    <select id="selectMerchantById" parameterType="Long" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMerchant" parameterType="Merchant">
+        insert into biz_merchant
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null and id != '' ">id,</if>
+			<if test="bizName != null and bizName != '' ">bizName,</if>
+			<if test="desc != null and desc != '' ">bizdesc,</if>
+			<if test="logo != null and logo != '' ">logo,</if>
+			<if test="userName != null and userName != '' ">userName,</if>
+			<if test="phone != null and phone != '' ">phone,</if>
+			<if test="pic != null and pic != '' ">pic,</if>
+			<if test="prodesc != null and prodesc != '' ">prodesc,</if>
+			<if test="sort != null and sort != '' ">sort,</if>
+			<if test="rank != null and rank != '' ">rank,</if>
+			<if test="provinceId != null and provinceId != '' ">provinceId,</if>
+			<if test="city != null and city != '' ">city,</if>
+            createTime
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null and id != ''">#{id},</if>
+			<if test="bizName != null and bizName != ''">#{bizName},</if>
+			<if test="desc != null and desc != ''">#{desc},</if>
+			<if test="logo != null and logo != ''">#{logo},</if>
+			<if test="userName != null and userName != ''">#{userName},</if>
+			<if test="phone != null and phone != ''">#{phone},</if>
+			<if test="pic != null and pic != ''">#{pic},</if>
+			<if test="prodesc != null and prodesc != ''">#{prodesc},</if>
+			<if test="sort != null and sort != ''">#{sort},</if>
+			<if test="rank != null and rank != ''">#{rank},</if>
+			<if test="provinceId != null and provinceId != ''">#{provinceId},</if>
+			<if test="city != null and city != ''">#{city},</if>
+            now()
+         </trim>
+    </insert>
+	 
+    <update id="updateMerchant" parameterType="Merchant">
+        update biz_merchant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="desc != null  and desc != ''  ">desc = #{desc},</if>
+            <if test="logo != null  and logo != ''  ">logo = #{logo},</if>
+            <if test="userName != null  and userName != ''  ">userName = #{userName},</if>
+            <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
+            <if test="pic != null  and pic != ''  ">pic = #{pic},</if>
+            <if test="prodesc != null  and prodesc != ''  ">prodesc = #{prodesc},</if>
+            <if test="sort != null  ">sort = #{sort},</if>
+            <if test="rank != null  ">rank = #{rank},</if>
+            <if test="provinceId != null  ">provinceId = #{provinceId},</if>
+            <if test="city != null  ">city = #{city},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteMerchantById" parameterType="Long">
+        delete from biz_merchant where id = #{id}
+    </delete>
+	
+    <delete id="deleteMerchantByIds" parameterType="String">
+        delete from biz_merchant where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

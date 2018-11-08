@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-order-add">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">客户名：</label>
+				<div class="col-sm-8">
+					<input id="userName" name="userName" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">客户电话：</label>
+				<div class="col-sm-8">
+					<input id="userPhone" name="userPhone" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">省份ID：</label>
+				<div class="col-sm-8">
+					<input id="provinceId" name="provinceId" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">城市：</label>
+				<div class="col-sm-8">
+					<input id="cityId" name="cityId" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">商家：</label>
+				<div class="col-sm-8">
+					<input id="merId" name="merId" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">项目：</label>
+				<div class="col-sm-8">
+					<input id="projectId" name="projectId" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">价格：</label>
+				<div class="col-sm-8">
+					<input id="price" name="price" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">下单时间：</label>
+				<div class="col-sm-8">
+					<input id="createTime" name="createTime" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="form-control-static col-sm-offset-9">
+					<button type="submit" class="btn btn-primary">提交</button>
+					<button onclick="$.modal.close()" class="btn btn-danger" type="button">关闭</button>
+				</div>
+			</div>
+		</form>
+	</div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "module/order"
+		$("#form-order-add").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			},
+			submitHandler: function(form) {
+				$.operate.save(prefix + "/add", $('#form-order-add').serialize());
+			}
+		});
+	</script>
+</body>
+</html>

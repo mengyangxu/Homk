@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homk.project.module.proj.mapper.ProjMapper">
+    
+    <resultMap type="Proj" id="ProjResult">
+        <result property="id"    column="id"    />
+        <result property="proName"    column="proName"    />
+        <result property="price"    column="price"    />
+        <result property="merId"    column="merId"    />
+    </resultMap>
+	
+	<sql id="selectProjVo">
+        select id, proName, price, merId from biz_proj
+    </sql>
+	
+    <select id="selectProjList" parameterType="Proj" resultMap="ProjResult">
+        <include refid="selectProjVo"/>
+        <where>  
+            <if test="id != null and id != ''"> and id = #{id}</if>
+             <if test="proName != null and proName != ''"> and proName = #{proName}</if>
+             <if test="price != null and price != ''"> and price = #{price}</if>
+             <if test="merId != null and merId != ''"> and merId = #{merId}</if>
+         </where>
+    </select>
+
+    <select id="findProjList" parameterType="Proj" resultType="Map">
+        select
+          a.id,
+          a.proName,
+          a.price,
+          a.merId,
+          b.bizName
+        from biz_proj a
+        left join biz_merchant b on a.merId = b.id
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+            <if test="proName != null and proName != ''"> and proName = #{proName}</if>
+            <if test="price != null and price != ''"> and price = #{price}</if>
+            <if test="merId != null and merId != ''"> and merId = #{merId}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjById" parameterType="Integer" resultMap="ProjResult">
+        <include refid="selectProjVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProj" parameterType="Proj">
+        insert into biz_proj
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null and id != '' ">id,</if>
+			<if test="proName != null and proName != '' ">proName,</if>
+			<if test="price != null and price != '' ">price,</if>
+			<if test="merId != null and merId != '' ">merId,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null and id != ''">#{id},</if>
+			<if test="proName != null and proName != ''">#{proName},</if>
+			<if test="price != null and price != ''">#{price},</if>
+			<if test="merId != null and merId != ''">#{merId},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateProj" parameterType="Proj">
+        update biz_proj
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="proName != null  and proName != ''  ">proName = #{proName},</if>
+            <if test="price != null  ">price = #{price},</if>
+            <if test="merId != null  ">merId = #{merId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteProjById" parameterType="Integer">
+        delete from biz_proj where id = #{id}
+    </delete>
+	
+    <delete id="deleteProjByIds" parameterType="String">
+        delete from biz_proj where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
