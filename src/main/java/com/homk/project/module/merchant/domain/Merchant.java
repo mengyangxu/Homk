@@ -43,6 +43,8 @@ public class Merchant extends BaseEntity
 
 	private Date createTime;
 
+	private String cityIds;
+
 	public void setId(Long id) 
 	{
 		this.id = id;
@@ -175,5 +177,13 @@ public class Merchant extends BaseEntity
 	@Override
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getCityIds() {
+		return cityIds;
+	}
+
+	public void setCityIds(String cityIds) {
+		this.cityIds = cityIds;
 	}
 }

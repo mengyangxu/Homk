@@ -10,6 +10,11 @@ ruoyi:
   profile: D:/profile/
   # 获取ip地址开关
   addressEnabled: false
+
+homk:
+  profile: D:/profile/
+  picPrefix: http://localhost/images/
+
 #开发环境配置
 server:
   #服务端口

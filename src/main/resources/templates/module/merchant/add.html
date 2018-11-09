@@ -2,6 +2,7 @@
 <html  lang="zh" xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
 <head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-merchant-add">
@@ -19,9 +20,19 @@
 			</div>
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">logo：</label>
-				<div class="col-sm-8">
-					<input id="logo" name="logo" class="form-control" type="text">
+				<div class="col-sm-2">
+					<div>
+						<image th:src="@{/img/add.jpg}"
+							   onclick="$(this).parent().children('input').click();"
+							   width="140"  height="100"
+							   id="logopic"></image>
+						<input type="file" class="previewImg" name="linkOneIdCardBackPicfile" id="linkOneIdCardBackPicfile" style="display: none;"
+							   onchange="getObjectURL(this.files,'#logopic','#logo')"/>
+						<input type="hidden" id="logo" name="logo" >
+					</div>
+					<br>
 				</div>
+
 			</div>
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">联系人：</label>
@@ -37,9 +48,60 @@
 			</div>
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">流程图片：</label>
-				<div class="col-sm-8">
-					<input id="pic" name="pic" class="form-control" type="text">
+
+				<div class="col-sm-2">
+					<div id="picGroup">
+						<div class="picg">
+							<image th:src="@{/img/add.jpg}"
+								   onclick="$(this).parent().children('input').click();"
+								   width="160"  height="100"
+								   id="picpic1"></image>
+							<input type="file" class="previewImg" style="display: none;"
+								   onchange="getObjectURL(this.files,'#picpic1','#pic1')"/>
+							<input type="hidden" id="pic1" name="pic" >
+						</div>
+						<div class="picg">
+							<image th:src="@{/img/add.jpg}"
+								   onclick="$(this).parent().children('input').click();"
+								   width="160"  height="100"
+								   id="picpic2"></image>
+							<input type="file" class="previewImg" style="display: none;"
+								   onchange="getObjectURL(this.files,'#picpic2','#pic2')"/>
+							<input type="hidden" id="pic2" name="pic" >
+						</div>
+						<div class="picg">
+							<image th:src="@{/img/add.jpg}"
+								   onclick="$(this).parent().children('input').click();"
+								   width="160"  height="100"
+								   id="picpic3"></image>
+							<input type="file" class="previewImg" style="display: none;"
+								   onchange="getObjectURL(this.files,'#picpic3','#pic3')"/>
+							<input type="hidden" id="pic3" name="pic" >
+						</div>
+						<div class="picg">
+							<image th:src="@{/img/add.jpg}"
+								   onclick="$(this).parent().children('input').click();"
+								   width="160"  height="100"
+								   id="picpic4"></image>
+							<input type="file" class="previewImg" style="display: none;"
+								   onchange="getObjectURL(this.files,'#picpic4','#pic4')"/>
+							<input type="hidden" id="pic4" name="pic" >
+						</div>
+						<div class="picg">
+							<image th:src="@{/img/add.jpg}"
+								   onclick="$(this).parent().children('input').click();"
+								   width="160"  height="100"
+								   id="picpic5"></image>
+							<input type="file" class="previewImg" style="display: none;"
+								   onchange="getObjectURL(this.files,'#picpic5','#pic5')"/>
+							<input type="hidden" id="pic5" name="pic" >
+						</div>
+
+					</div>
+					<br>
 				</div>
+
+
 			</div>
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">商家排序：</label>
@@ -63,8 +125,7 @@
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">商家地域：</label>
 				<div class="col-sm-8">
-					<input id="provinceId" name="provinceId" class="form-control" type="text">省
-					<input id="city" name="city" class="form-control" type="text">市
+					<div id="cityTrees" class="ztree"></div>
 				</div>
 			</div>
 			<div class="form-group">
@@ -76,7 +137,20 @@
 		</form>
 	</div>
     <div th:include="include::footer"></div>
+	<script th:src="@{/ajax/libs/jquery-ztree/3.5/js/jquery.ztree.all-3.5.js}"></script>
     <script type="text/javascript">
+        $(function() {
+            var url = ctx + "module/merchant/cityTreeData";
+            var options = {
+                id: "cityTrees",
+                url: url,
+                check: { enable: true, nocheckInherit: true, chkboxType: { "Y": "ps", "N": "ps" } },
+                expandLevel: 0
+            };
+            $.tree.init(options);
+        });
+
+
 		var prefix = ctx + "module/merchant"
 		$("#form-merchant-add").validate({
 			rules:{
@@ -85,9 +159,34 @@
 				},
 			},
 			submitHandler: function(form) {
-				$.operate.save(prefix + "/add", $('#form-merchant-add').serialize());
+                var cityIds = $.tree.getCheckedNodes();
+				var data =  $('#form-merchant-add').serialize();
+				data += '&cityIds='+cityIds;
+				$.operate.save(prefix + "/add",data);
 			}
 		});
+
+
+        function getObjectURL(file,id,inputId)
+        {
+            var formdata = new FormData();
+            formdata.append("file", file[0]);
+            $.ajax({
+                url: prefix+"/updateFile",
+                data: formdata,
+                type: "post",
+                processData: false,
+                contentType: false,
+                success: function(result) {
+                    $(id).attr('src',result.picPrefix+result.filePath);
+                    $(inputId).val(result.filePath);
+                }
+            })
+        }
+
+
+
+
 	</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.homk.project.module.merchant.service;
 
 import com.homk.project.module.merchant.domain.Merchant;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商家 服务层
@@ -50,5 +51,6 @@ public interface IMerchantService
      * @return 结果
      */
 	public int deleteMerchantByIds(String ids);
-	
+
+    public List<Map<String, Object>> findCitys(String merId);
 }

@@ -48,12 +48,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           a.createTime,
           b.bizName,
           proj.proName,
-          p.name province,
           ci.name city
         from biz_order a
         left join biz_merchant b on b.id = a.merId
         left join biz_proj proj on proj.id = a.projectId
-        left join biz_province p on p.id = a.provinceId
         left join biz_city ci on ci.id = a.cityId
         <where>
             <if test="userId != null and userId != ''"> and a.userId = #{userId}</if>

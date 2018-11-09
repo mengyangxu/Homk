@@ -1,15 +1,18 @@
 package com.homk.project.module.merchant.controller;
 
 import java.util.List;
+import java.util.Map;
+
+import com.homk.common.utils.file.FileUploadUtils;
+import com.homk.project.system.role.domain.Role;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.homk.framework.aspectj.lang.annotation.Log;
 import com.homk.framework.aspectj.lang.enums.BusinessType;
 import com.homk.project.module.merchant.domain.Merchant;
@@ -17,6 +20,7 @@ import com.homk.project.module.merchant.service.IMerchantService;
 import com.homk.framework.web.controller.BaseController;
 import com.homk.framework.web.page.TableDataInfo;
 import com.homk.framework.web.domain.AjaxResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/module/merchant")
 public class MerchantController extends BaseController
 {
+
+	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
+
     private String prefix = "module/merchant";
+
+	@Value("${homk.picPrefix}")
+	private String picPrefix;
 	
 	@Autowired
 	private IMerchantService merchantService;
@@ -59,24 +69,22 @@ public class MerchantController extends BaseController
 	 * 新增商家
 	 */
 	@GetMapping("/add")
-	public String add()
+	public String add(ModelMap mmp)
 	{
-	    return prefix + "/add";
+		return prefix + "/add";
 	}
 
-	@PostMapping("/addInit")
+	/**
+	 * 加载city列表树
+	 */
+	@GetMapping("/cityTreeData")
 	@ResponseBody
-	public AjaxResult addInit(HttpServletRequest req)
+	public List<Map<String, Object>> cityTreeData(HttpServletRequest req)
 	{
-		AjaxResult result = new AjaxResult();
-		//省份
-
-		//城市
-
-
-		return result;
+		String merId = req.getParameter("merId");
+		List<Map<String, Object>> tree = merchantService.findCitys(merId);
+		return tree;
 	}
-
 	
 	/**
 	 * 新增保存商家
@@ -98,6 +106,7 @@ public class MerchantController extends BaseController
 	{
 		Merchant merchant = merchantService.selectMerchantById(id);
 		mmap.put("merchant", merchant);
+		mmap.put("picPrefix", picPrefix);
 	    return prefix + "/edit";
 	}
 	
@@ -124,5 +133,28 @@ public class MerchantController extends BaseController
 	{		
 		return toAjax(merchantService.deleteMerchantByIds(ids));
 	}
+
+
+	@PostMapping("/updateFile")
+	@ResponseBody
+	public AjaxResult updateFile( @RequestParam("file") MultipartFile file)
+	{
+		try
+		{
+			if (!file.isEmpty())
+			{
+				String filePath = FileUploadUtils.upload(file);
+				return success().put("filePath", filePath).put("picPrefix", picPrefix);
+
+			}
+			return error();
+		}
+		catch (Exception e)
+		{
+			log.error("保存图片失败！", e);
+			return error(e.getMessage());
+		}
+	}
+
 	
 }

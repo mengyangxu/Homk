@@ -2,6 +2,7 @@
 <html  lang="zh" xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
 <head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-merchant-edit" th:object="${merchant}">
@@ -9,7 +10,7 @@
             <div class="form-group">	
                 <label class="col-sm-3 control-label">商家：</label>
                 <div class="col-sm-8">
-                    <input id="bizName" name="desc" th:field="*{desc}" class="form-control" type="text">
+                    <input id="bizName" name="bizName" th:field="*{bizName}" class="form-control" type="text">
                 </div>
             </div><div class="form-group">
                 <label class="col-sm-3 control-label">商家描述：</label>
@@ -19,8 +20,17 @@
             </div>
             <div class="form-group">	
                 <label class="col-sm-3 control-label">logo：</label>
-                <div class="col-sm-8">
-                    <input id="logo" name="logo" th:field="*{logo}" class="form-control" type="text">
+                <div class="col-sm-2">
+                    <div>
+                        <image th:src="${picPrefix}+*{logo}"
+                               onclick="$(this).parent().children('input').click();"
+                               width="140"  height="100"
+                               id="logopic"></image>
+                        <input type="file" class="previewImg" name="linkOneIdCardBackPicfile" id="linkOneIdCardBackPicfile" style="display: none;"
+                               onchange="getObjectURL(this.files,'#logopic','#logo')"/>
+                        <input type="hidden" id="logo" name="logo" th:value="*{logo}">
+                    </div>
+                    <br>
                 </div>
             </div>
             <div class="form-group">	
@@ -37,7 +47,7 @@
             </div>
             <div class="form-group">	
                 <label class="col-sm-3 control-label">流程图片：</label>
-                <div class="col-sm-8">
+                <div class="col-sm-8" id="picGroup">
                     <input id="pic" name="pic" th:field="*{pic}" class="form-control" type="text">
                 </div>
             </div>
@@ -54,10 +64,11 @@
                 </div>
             </div>
             <div class="form-group">	
-                <label class="col-sm-3 control-label">商家地域：</label>
-                <div class="col-sm-8">
-                    <input id="provinceId" name="provinceId" th:field="*{provinceId}" class="form-control" type="text">省
-                    <input id="city" name="city" th:field="*{city}" class="form-control" type="text">市
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">商家地域：</label>
+                    <div class="col-sm-8">
+                        <div id="cityTrees" class="ztree"></div>
+                    </div>
                 </div>
             </div>
 			<div class="form-group">
@@ -69,7 +80,67 @@
 		</form>
     </div>
     <div th:include="include::footer"></div>
-    <script type="text/javascript">
+    <script th:src="@{/ajax/libs/jquery-ztree/3.5/js/jquery.ztree.all-3.5.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var pics = [[${merchant.pic}]];
+        var merId = [[${merchant.id}]];
+        var picPrefix = [[${picPrefix}]];
+        var picss = pics.split(',');
+        var html = '';
+        for(var i=0;i<picss.length;i++){
+            if(''!=picss[i]) {
+                html += '<div class="picg">\n' +
+                    '\t\t\t\t\t\t\t<image src="'+picPrefix+picss[i]+'"\n' +
+                    '\t\t\t\t\t\t\t\t   onclick="$(this).parent().children(\'input\').click();"\n' +
+                    '\t\t\t\t\t\t\t\t   width="160"  height="100"\n' +
+                    '\t\t\t\t\t\t\t\t   id="picpic'+i+'"></image>\n' +
+                    '\t\t\t\t\t\t\t<input type="file" class="previewImg" style="display: none;"\n' +
+                    '\t\t\t\t\t\t\t\t   onchange="getObjectURL(this.files,\'#picpic'+i+'\',\'#pic'+i+'\')"/>\n' +
+                    '\t\t\t\t\t\t\t<input type="hidden" id="pic' + i + '" name="pic" value="' + picss[i] + '">\n' +
+                    '\t\t\t\t\t\t</div>';
+            }else {
+                html += '<div class="picg">\n' +
+                    '\t\t\t\t\t\t\t<image src="/img/add.jpg"\n' +
+                    '\t\t\t\t\t\t\t\t   onclick="$(this).parent().children(\'input\').click();"\n' +
+                    '\t\t\t\t\t\t\t\t   width="160"  height="100"\n' +
+                    '\t\t\t\t\t\t\t\t   id="picpic'+i+'"></image>\n' +
+                    '\t\t\t\t\t\t\t<input type="file" class="previewImg" style="display: none;"\n' +
+                    '\t\t\t\t\t\t\t\t   onchange="getObjectURL(this.files,\'#picpic'+i+'\',\'#pic'+i+'\')"/>\n' +
+                    '\t\t\t\t\t\t\t<input type="hidden" id="pic' + i + '" name="pic">\n' +
+                    '\t\t\t\t\t\t</div>';
+            }
+        }
+        $("#picGroup").html(html);
+
+        $(function() {
+            var url = ctx + "module/merchant/cityTreeData?merId="+merId;
+            var options = {
+                id: "cityTrees",
+                url: url,
+                check: { enable: true, nocheckInherit: true, chkboxType: { "Y": "ps", "N": "ps" } },
+                expandLevel: 0
+            };
+            $.tree.init(options);
+        });
+
+
+        function getObjectURL(file,id,inputId)
+        {
+            var formdata = new FormData();
+            formdata.append("file", file[0]);
+            $.ajax({
+                url: prefix+"/updateFile",
+                data: formdata,
+                type: "post",
+                processData: false,
+                contentType: false,
+                success: function(result) {
+                    $(id).attr('src',result.picPrefix+result.filePath);
+                    $(inputId).val(result.filePath);
+                }
+            })
+        }
+
 		var prefix = ctx + "module/merchant"
 		$("#form-merchant-edit").validate({
 			rules:{
@@ -78,9 +149,13 @@
 				},
 			},
 			submitHandler: function(form) {
-				$.operate.save(prefix + "/edit", $('#form-merchant-edit').serialize());
+                var cityIds = $.tree.getCheckedNodes();
+                var data =  $('#form-merchant-edit').serialize();
+                data += '&cityIds='+cityIds;
+				$.operate.save(prefix + "/edit",data);
 			}
 		});
+
 	</script>
 </body>
 </html>

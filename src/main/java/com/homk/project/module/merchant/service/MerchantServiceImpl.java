@@ -1,8 +1,10 @@
 package com.homk.project.module.merchant.service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import com.homk.common.utils.StringUtils;
+import com.homk.project.system.menu.domain.Menu;
+import com.homk.project.system.role.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.homk.project.module.merchant.mapper.MerchantMapper;
@@ -80,6 +82,49 @@ public class MerchantServiceImpl implements IMerchantService
 	public int deleteMerchantByIds(String ids)
 	{
 		return merchantMapper.deleteMerchantByIds(Convert.toStrArray(ids));
+	}
+
+	public List<Map<String, Object>> findCitys(String merId){
+		List<Map<String, Object>> trees = new ArrayList<Map<String, Object>>();
+		List<Map> cityList = merchantMapper.findCitys();
+		if(StringUtils.isEmpty(merId)) {
+			trees = getTrees(cityList, false, null, true);
+		}else {
+			Merchant merchant = merchantMapper.selectMerchantById(Long.valueOf(merId));
+			String cityIds = merchant.getCityIds();
+			if(StringUtils.isEmpty(cityIds)) {
+				trees = getTrees(cityList, false, null, true);
+			}else {
+				List citys = Arrays.asList(cityIds.split(","));
+				trees = getTrees(cityList, true, citys, true);
+			}
+		}
+		return trees;
+	}
+
+	public List<Map<String, Object>> getTrees(List<Map> cityList, boolean isCheck, List<String> cityIds,
+											  boolean permsFlag)
+	{
+		List<Map<String, Object>> trees = new ArrayList<Map<String, Object>>();
+		for (Map city: cityList)
+		{
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", city.get("id"));
+			map.put("name", city.get("name"));
+			map.put("pId", city.get("parentId"));
+			map.put("title", city.get("name"));
+			if(isCheck){
+				if(cityIds.contains(city.get("id").toString())){
+					map.put("checked", true);
+				}else {
+					map.put("checked", false);
+				}
+			}else {
+				map.put("checked", false);
+			}
+			trees.add(map);
+		}
+		return trees;
 	}
 	
 }

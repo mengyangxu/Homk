@@ -1,7 +1,8 @@
 package com.homk.project.module.merchant.mapper;
 
 import com.homk.project.module.merchant.domain.Merchant;
-import java.util.List;	
+import java.util.List;
+import java.util.Map;
 
 /**
  * 商家 数据层
@@ -58,5 +59,6 @@ public interface MerchantMapper
      * @return 结果
      */
 	public int deleteMerchantByIds(String[] ids);
-	
+
+	List<Map> findCitys();
 }

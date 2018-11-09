@@ -18,10 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="provinceId"    column="provinceId"    />
         <result property="city"    column="city"    />
         <result property="createTime"    column="createTime"    />
+        <result property="cityIds" column="cityIds" />
     </resultMap>
 	
 	<sql id="selectMerchantVo">
-        select id, bizName, bizdesc, logo, userName, phone, pic, prodesc, sort, rank, provinceId, city ,createTime from biz_merchant
+        select id, bizName, bizdesc, logo, userName, phone, pic, prodesc, sort, rank, provinceId, city ,createTime,cityIds from biz_merchant
     </sql>
 	
     <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
@@ -61,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="rank != null and rank != '' ">rank,</if>
 			<if test="provinceId != null and provinceId != '' ">provinceId,</if>
 			<if test="city != null and city != '' ">city,</if>
+            <if test="cityIds!=null and cityIds!=''">cityIds,</if>
             createTime
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -76,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="rank != null and rank != ''">#{rank},</if>
 			<if test="provinceId != null and provinceId != ''">#{provinceId},</if>
 			<if test="city != null and city != ''">#{city},</if>
+            <if test="cityIds!=null and cityIds!=''">#{cityIds},</if>
             now()
          </trim>
     </insert>
@@ -83,7 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateMerchant" parameterType="Merchant">
         update biz_merchant
         <trim prefix="SET" suffixOverrides=",">
-            <if test="desc != null  and desc != ''  ">desc = #{desc},</if>
+            <if test="bizName != null and bizName != '' ">bizName = #{bizName},</if>
+            <if test="desc != null  and desc != ''  ">bizdesc = #{desc},</if>
             <if test="logo != null  and logo != ''  ">logo = #{logo},</if>
             <if test="userName != null  and userName != ''  ">userName = #{userName},</if>
             <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
@@ -93,6 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="rank != null  ">rank = #{rank},</if>
             <if test="provinceId != null  ">provinceId = #{provinceId},</if>
             <if test="city != null  ">city = #{city},</if>
+            <if test="cityIds!=null and cityIds!=''">cityIds = #{cityIds},</if>
         </trim>
         where id = #{id}
     </update>
@@ -107,5 +112,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    
+    <select id="findCitys" resultType="Map">
+        select
+          a.id,
+          a.name,
+          a.parentId
+        from biz_city a
+    </select>
     
 </mapper>
