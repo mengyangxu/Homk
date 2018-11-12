@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="pic"    column="pic"    />
         <result property="prodesc"    column="prodesc"    />
         <result property="sort"    column="sort"    />
-        <result property="rank"    column="rank"    />
+        <result property="rankk"    column="rankk"    />
         <result property="provinceId"    column="provinceId"    />
         <result property="city"    column="city"    />
         <result property="createTime"    column="createTime"    />
@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 	
 	<sql id="selectMerchantVo">
-        select id, bizName, bizdesc, logo, userName, phone, pic, prodesc, sort, rank, provinceId, city ,createTime,cityIds from biz_merchant
+        select id, bizName, bizdesc, logo, userName, phone, pic, prodesc, sort, rankk ,createTime,cityIds from biz_merchant
     </sql>
 	
     <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              <if test="pic != null and pic != ''"> and pic = #{pic}</if>
              <if test="prodesc != null and prodesc != ''"> and prodesc = #{prodesc}</if>
              <if test="sort != null and sort != ''"> and sort = #{sort}</if>
-             <if test="rank != null and rank != ''"> and rank = #{rank}</if>
+             <if test="rankk != null and rankk != ''"> and rankk = #{rankk}</if>
              <if test="provinceId != null and provinceId != ''"> and provinceId = #{provinceId}</if>
              <if test="city != null and city != ''"> and city = #{city}</if>
          </where>
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="pic != null and pic != '' ">pic,</if>
 			<if test="prodesc != null and prodesc != '' ">prodesc,</if>
 			<if test="sort != null and sort != '' ">sort,</if>
-			<if test="rank != null and rank != '' ">rank,</if>
+			<if test="rankk != null and rankk != '' ">rankk,</if>
 			<if test="provinceId != null and provinceId != '' ">provinceId,</if>
 			<if test="city != null and city != '' ">city,</if>
             <if test="cityIds!=null and cityIds!=''">cityIds,</if>
@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="pic != null and pic != ''">#{pic},</if>
 			<if test="prodesc != null and prodesc != ''">#{prodesc},</if>
 			<if test="sort != null and sort != ''">#{sort},</if>
-			<if test="rank != null and rank != ''">#{rank},</if>
+			<if test="rankk != null and rankk != ''">#{rankk},</if>
 			<if test="provinceId != null and provinceId != ''">#{provinceId},</if>
 			<if test="city != null and city != ''">#{city},</if>
             <if test="cityIds!=null and cityIds!=''">#{cityIds},</if>
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="pic != null  and pic != ''  ">pic = #{pic},</if>
             <if test="prodesc != null  and prodesc != ''  ">prodesc = #{prodesc},</if>
             <if test="sort != null  ">sort = #{sort},</if>
-            <if test="rank != null  ">rank = #{rank},</if>
+            <if test="rankk != null  ">rankk = #{rankk},</if>
             <if test="provinceId != null  ">provinceId = #{provinceId},</if>
             <if test="city != null  ">city = #{city},</if>
             <if test="cityIds!=null and cityIds!=''">cityIds = #{cityIds},</if>

@@ -35,7 +35,7 @@ public class Merchant extends BaseEntity
 	/**  */
 	private Integer sort;
 	/** 1-5 */
-	private Integer rank;
+	private Integer rankk;
 	/**  */
 	private Long provinceId;
 	/**  */
@@ -117,14 +117,14 @@ public class Merchant extends BaseEntity
 	{
 		return sort;
 	}
-	public void setRank(Integer rank) 
+	public void setRankk(Integer rankk)
 	{
-		this.rank = rank;
+		this.rankk = rankk;
 	}
 
-	public Integer getRank() 
+	public Integer getRankk()
 	{
-		return rank;
+		return rankk;
 	}
 	public void setProvinceId(Long provinceId) 
 	{
@@ -155,7 +155,7 @@ public class Merchant extends BaseEntity
             .append("pic", getPic())
             .append("prodesc", getProdesc())
             .append("sort", getSort())
-            .append("rank", getRank())
+            .append("rankk", getRankk())
             .append("provinceId", getProvinceId())
             .append("city", getCity())
             .toString();
